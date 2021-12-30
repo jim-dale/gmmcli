@@ -9,12 +9,27 @@ namespace gmmcli
     {
         public static string GetStringOption(string[] args, string argName, string defaultValue = null)
         {
+            return GetStringOption(args, argName, false, defaultValue);
+        }
+
+        public static string GetAndExpandStringOption(string[] args, string argName, string defaultValue = null)
+        {
+            return GetStringOption(args, argName, true, defaultValue);
+        }
+
+        public static string GetStringOption(string[] args, string argName, bool expandEnvironmentVariables, string defaultValue = null)
+        {
             string result = defaultValue;
 
             int index = Array.FindIndex(args, i => string.Equals(i, argName, StringComparison.OrdinalIgnoreCase));
             if (index >= 0 && index < (args.Length) - 1)
             {
                 result = args[index + 1];
+
+                if (expandEnvironmentVariables && string.IsNullOrWhiteSpace(result) == false)
+                {
+                    result = Environment.ExpandEnvironmentVariables(result);
+                }
             }
 
             return result;

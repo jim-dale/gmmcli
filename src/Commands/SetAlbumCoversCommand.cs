@@ -17,6 +17,8 @@ namespace gmmcli
 
         public int Run(SetAlbumCoversOptions options)
         {
+            _logger.LogInformation("{Options}", options);
+
             var items = Utility.LoadMetadataFromJsonFile(options.MetadataPath);
 
             SetAlbumCovers(items);

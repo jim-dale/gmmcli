@@ -23,6 +23,8 @@ namespace gmmcli
         {
             int result = 0;
 
+            _logger.LogInformation("{args}", args);
+
             if (args.Contains("delete-images", StringComparer.OrdinalIgnoreCase))
             {
                 var command = ActivatorUtilities.GetServiceOrCreateInstance<DeleteImagesCommand>(_serviceProvider);
@@ -44,12 +46,10 @@ namespace gmmcli
             else if (args.Contains("export-metadata", StringComparer.OrdinalIgnoreCase))
             {
                 var options = new ExportMetadataOptions(
-                    Utility.GetStringOption(args, "--audio-folder"),
-                    Utility.GetStringOption(args, "--metadata-file", "audio-metadata.json"),
+                    Utility.GetAndExpandStringOption(args, "--audio-folder"),
+                    Utility.GetAndExpandStringOption(args, "--metadata-file", "audio-metadata.json"),
                     Utility.GetStringOption(args, "--searchPatterns", "**/*.mp3;**/*.flac")
                 );
-
-                _logger.LogInformation("{Options}", options.ToString());
 
                 if (options.IsValid())
                 {
@@ -61,10 +61,8 @@ namespace gmmcli
             else if (args.Contains("set-albumcovers", StringComparer.OrdinalIgnoreCase))
             {
                 var options = new SetAlbumCoversOptions(
-                    Utility.GetStringOption(args, "--metadata-file", "audio-metadata.json")
+                    Utility.GetAndExpandStringOption(args, "--metadata-file", "audio-metadata.json")
                 );
-
-                _logger.LogInformation("{Options}", options.ToString());
 
                 if (options.IsValid())
                 {
@@ -72,6 +70,21 @@ namespace gmmcli
 
                     command.Run(options);
                 }
+            }
+            else
+            {
+                Console.WriteLine("gmmcli - Groove Music Manager command line interface");
+                Console.WriteLine();
+                Console.WriteLine("gmmcli <command> [<args>]");
+                Console.WriteLine();
+                Console.WriteLine("   export-metadata --audio-folder <folder> --metadata-file <JSON metadata file> --searchPatterns <file spec>");
+                Console.WriteLine("      Scan a folder for albums and extract ID3 metadata.");
+                Console.WriteLine("         --audio-folder   Folder containing the albums to be scanned (default is audio-metadata.json)");
+                Console.WriteLine();
+                Console.WriteLine("   set-albumcovers --metadata-file <JSON metadata file>");
+                Console.WriteLine("      Load the album metadata file and apply the album cover");
+                Console.WriteLine("      image stored for each album to the Groove Music database.");
+                Console.WriteLine();
             }
 
             return result;

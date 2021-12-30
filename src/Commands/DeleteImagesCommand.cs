@@ -18,7 +18,7 @@ namespace gmmcli
             var folder = EseUtility.GetGrooveMusicFolder();
             if (folder == default)
             {
-                _logger.LogInformation("No images to delete as Groove Music has not been used yet.");
+                _logger.LogInformation("Groove music folder doesn't exist. Run Groove Music before trying to delete the image stores.");
             }
             else
             {
